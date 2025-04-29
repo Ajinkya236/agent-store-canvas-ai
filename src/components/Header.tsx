@@ -79,6 +79,12 @@ const Header: React.FC = () => {
               <Link to="/browse" className="text-sm font-medium hover:underline underline-offset-4 hidden md:inline-block">
                 Browse
               </Link>
+              <Link to="/my-agents" className="text-sm font-medium hover:underline underline-offset-4 hidden md:inline-block">
+                My Agents
+              </Link>
+              <Link to="/chat-assistant" className="text-sm font-medium hover:underline underline-offset-4 hidden md:inline-block">
+                Chat Assistant
+              </Link>
               <Link to="/docs" className="text-sm font-medium hover:underline underline-offset-4 hidden md:inline-block">
                 Docs
               </Link>
@@ -170,6 +176,12 @@ const Header: React.FC = () => {
           <nav className="flex flex-col space-y-4">
             <Link to="/browse" className="text-sm font-medium py-2 px-4 rounded-md hover:bg-muted" onClick={toggleMobileMenu}>
               Browse
+            </Link>
+            <Link to="/my-agents" className="text-sm font-medium py-2 px-4 rounded-md hover:bg-muted" onClick={toggleMobileMenu}>
+              My Agents
+            </Link>
+            <Link to="/chat-assistant" className="text-sm font-medium py-2 px-4 rounded-md hover:bg-muted" onClick={toggleMobileMenu}>
+              Chat Assistant
             </Link>
             <Link to="/docs" className="text-sm font-medium py-2 px-4 rounded-md hover:bg-muted" onClick={toggleMobileMenu}>
               Docs
