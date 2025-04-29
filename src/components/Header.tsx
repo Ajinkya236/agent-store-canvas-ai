@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ModeToggle } from '@/components/ModeToggle';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import GlobalSearch from '@/components/GlobalSearch';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,6 +44,10 @@ const Header: React.FC = () => {
         <Link to="/" className="font-archivo-black text-2xl">
           Enterprise AI
         </Link>
+        
+        <div className="hidden md:block flex-1 mx-10">
+          <GlobalSearch />
+        </div>
         
         <nav className="flex items-center space-x-4">
           <Link to="/browse" className="text-sm font-medium hover:underline underline-offset-4">
@@ -123,6 +128,10 @@ const Header: React.FC = () => {
             </>
           )}
         </nav>
+      </div>
+      
+      <div className="md:hidden p-2 border-t">
+        <GlobalSearch />
       </div>
     </header>
   );
