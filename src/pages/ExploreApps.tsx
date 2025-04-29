@@ -367,7 +367,9 @@ const ExploreApps: React.FC = () => {
         )}
       </div>
 
-      <style jsx>{`
+      {/* Fix the style element by removing the jsx property */}
+      <style>
+        {`
         .hide-scrollbar::-webkit-scrollbar {
           display: none;
         }
@@ -375,7 +377,8 @@ const ExploreApps: React.FC = () => {
           -ms-overflow-style: none;
           scrollbar-width: none;
         }
-      `}</style>
+        `}
+      </style>
     </div>
   );
 };
