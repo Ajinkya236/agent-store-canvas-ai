@@ -15,22 +15,25 @@ interface ViewToggleAndSortProps {
   setViewMode: (mode: 'grid' | 'list') => void;
   sortOption: string;
   setSortOption: (option: string) => void;
+  isMobile?: boolean;
 }
 
 const ViewToggleAndSort: React.FC<ViewToggleAndSortProps> = ({
   viewMode,
   setViewMode,
   sortOption,
-  setSortOption
+  setSortOption,
+  isMobile = false
 }) => {
   return (
-    <div className="flex items-center justify-between mb-6">
+    <div className="flex items-center justify-between w-full">
       <div className="flex items-center space-x-2">
         <Button
           variant={viewMode === 'grid' ? 'default' : 'outline'}
           size="sm"
           onClick={() => setViewMode('grid')}
           aria-label="Grid view"
+          className="h-9 w-9 p-0"
         >
           <Grid2X2 className="h-4 w-4" />
         </Button>
@@ -39,15 +42,16 @@ const ViewToggleAndSort: React.FC<ViewToggleAndSortProps> = ({
           size="sm"
           onClick={() => setViewMode('list')}
           aria-label="List view"
+          className="h-9 w-9 p-0"
         >
           <List className="h-4 w-4" />
         </Button>
       </div>
 
       <div className="flex items-center">
-        <span className="mr-2 text-sm text-muted-foreground hidden md:inline">Sort by:</span>
+        {!isMobile && <span className="mr-2 text-sm text-muted-foreground hidden md:inline">Sort by:</span>}
         <Select value={sortOption} onValueChange={setSortOption}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className={isMobile ? "w-[130px]" : "w-[180px]"}>
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>

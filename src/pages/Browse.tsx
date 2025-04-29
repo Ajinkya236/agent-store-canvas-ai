@@ -11,7 +11,8 @@ import CategoryFilter from '@/components/CategoryFilter';
 import { AgentProps } from '@/components/AgentCard';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Filter } from 'lucide-react';
+import { Filter, ChevronUp } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Sample data for our AI agents
 const agentsData: AgentProps[] = [
@@ -104,7 +105,9 @@ const Browse: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredAgents, setFilteredAgents] = useState<AgentProps[]>(agentsData);
   const [activeCategory, setActiveCategory] = useState('All Categories');
-
+  const [showScrollToTop, setShowScrollToTop] = useState(false);
+  const isMobile = useIsMobile();
+  
   // Categories for filter
   const categories = [
     'All Categories',
@@ -143,11 +146,14 @@ const Browse: React.FC = () => {
     
     const categoryLower = category.toLowerCase();
     setFilteredAgents(agentsData.filter(agent => {
-      // In a real app, we would filter by category field
-      // For now, let's just simulate filtering by including description or name
       return agent.description.toLowerCase().includes(categoryLower) || 
              agent.name.toLowerCase().includes(categoryLower);
     }));
+  };
+
+  // Handle scroll to top
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   
   // Create collections by filtering the agents data
@@ -155,56 +161,77 @@ const Browse: React.FC = () => {
   const staffPicksAgents = agentsData.filter((_, i) => i % 3 === 1);
   const newReleasesAgents = agentsData.filter((_, i) => i % 3 === 2);
 
+  // Add scroll event listener to show/hide scroll-to-top button
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollToTop(window.scrollY > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
       
-      <div className="w-full px-6 sm:px-10 md:px-14 lg:px-20 pt-8">
+      <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 pt-4 md:pt-8">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-archivo-black mb-2">Enterprise Agent Store</h1>
-          <p className="text-lg text-muted-foreground mb-6">Discover and deploy AI agents that solve real business challenges</p>
+          <h1 className="text-2xl sm:text-3xl font-archivo-black mb-1 sm:mb-2">Enterprise Agent Store</h1>
+          <p className="text-sm sm:text-lg text-muted-foreground mb-4 sm:mb-6">Discover and deploy AI agents that solve real business challenges</p>
           
-          {/* Banner Carousel */}
-          <BannerCarousel />
-          
-          {/* Search Bar */}
+          {/* Search Bar - Full Width for Mobile */}
           <SearchBar onSearch={handleSearch} />
           
-          {/* Category Filter */}
+          {/* Banner Carousel - Adjusted for Mobile */}
+          <div className="mt-4">
+            <BannerCarousel />
+          </div>
+          
+          {/* Category Filter - Horizontally Scrollable for Mobile */}
           <CategoryFilter 
             categories={categories} 
             activeCategory={activeCategory} 
             onCategoryChange={handleCategoryChange} 
           />
           
-          <div className="mt-8 flex gap-8">
-            {/* Filter Panel - Hidden on mobile, visible on md and up */}
-            <div className="hidden md:block">
-              <FilterPanel />
-            </div>
-            
-            {/* Mobile Filter Button */}
+          <div className="mt-6 flex flex-col md:flex-row md:gap-8">
+            {/* Mobile Filter Button - Only shown on mobile */}
             <div className="md:hidden mb-4 w-full">
               <Sheet>
                 <SheetTrigger asChild>
-                  <Button variant="outline" className="w-full">
+                  <Button variant="outline" className="w-full flex items-center justify-center">
                     <Filter className="h-4 w-4 mr-2" />
                     Filters
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="left">
-                  <FilterPanel />
+                <SheetContent side="bottom" className="h-[80vh] rounded-t-xl">
+                  <div className="py-4 px-1">
+                    <h3 className="text-lg font-semibold mb-4">Filter Agents</h3>
+                    <FilterPanel />
+                  </div>
                 </SheetContent>
               </Sheet>
             </div>
             
-            <div className="flex-1">
-              <ViewToggleAndSort 
-                viewMode={viewMode} 
-                setViewMode={setViewMode} 
-                sortOption={sortOption} 
-                setSortOption={setSortOption}
-              />
+            {/* Filter Panel - Hidden on mobile, visible on md and up */}
+            <div className="hidden md:block md:w-64 lg:w-72 flex-shrink-0">
+              <div className="sticky top-24">
+                <FilterPanel />
+              </div>
+            </div>
+            
+            <div className="flex-1 w-full">
+              {/* View Toggle and Sort - Simplified for mobile */}
+              <div className="mb-4">
+                <ViewToggleAndSort 
+                  viewMode={viewMode} 
+                  setViewMode={setViewMode} 
+                  sortOption={sortOption} 
+                  setSortOption={setSortOption}
+                  isMobile={isMobile}
+                />
+              </div>
               
               {searchQuery || activeCategory !== 'All Categories' ? (
                 <AgentGrid agents={filteredAgents} />
@@ -219,6 +246,18 @@ const Browse: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Scroll to top button - appears after scrolling */}
+      {showScrollToTop && (
+        <Button
+          onClick={scrollToTop}
+          className="fixed bottom-6 right-6 rounded-full w-12 h-12 p-0 shadow-lg z-50"
+          variant="default"
+          aria-label="Scroll to top"
+        >
+          <ChevronUp className="h-6 w-6" />
+        </Button>
+      )}
     </div>
   );
 };

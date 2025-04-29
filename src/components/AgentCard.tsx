@@ -5,6 +5,7 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export interface AgentProps {
   id: number;
@@ -23,6 +24,7 @@ interface AgentCardProps {
 const AgentCard: React.FC<AgentCardProps> = ({ agent }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const isMobile = useIsMobile();
   
   // Check if this agent is already in saved agents on component mount
   useEffect(() => {
@@ -74,10 +76,10 @@ const AgentCard: React.FC<AgentCardProps> = ({ agent }) => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <CardContent className="p-0">
-        <Link to={`/agent/${agent.id}`} className="block p-5">
+        <Link to={`/agent/${agent.id}`} className="block p-4 sm:p-5">
           <div className="flex items-start justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-xl overflow-hidden bg-secondary flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl overflow-hidden bg-secondary flex items-center justify-center flex-shrink-0">
                 <img 
                   src={agent.logo || "/placeholder.svg"} 
                   alt={`${agent.name} logo`} 
@@ -85,8 +87,8 @@ const AgentCard: React.FC<AgentCardProps> = ({ agent }) => {
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-archivo-black text-lg truncate">{agent.name}</h3>
-                <p className="text-sm text-muted-foreground line-clamp-2">{agent.description}</p>
+                <h3 className="font-archivo-black text-base sm:text-lg truncate">{agent.name}</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">{agent.description}</p>
               </div>
             </div>
             <button 
@@ -94,6 +96,7 @@ const AgentCard: React.FC<AgentCardProps> = ({ agent }) => {
               className={`p-2 rounded-full hover:bg-secondary/80 transition-colors ${
                 isFavorite ? 'text-red-500' : 'text-muted-foreground'
               }`}
+              style={{ touchAction: 'manipulation' }}
               aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
             >
               <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
@@ -101,14 +104,14 @@ const AgentCard: React.FC<AgentCardProps> = ({ agent }) => {
           </div>
         </Link>
       </CardContent>
-      <CardFooter className="p-5 pt-0 border-t flex flex-col sm:flex-row gap-4 items-center justify-between">
-        <div className="flex items-center space-x-2 flex-wrap gap-2">
+      <CardFooter className="p-4 sm:p-5 pt-0 border-t flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-between">
+        <div className="flex items-center space-x-2 flex-wrap gap-2 w-full sm:w-auto">
           {agent.tags.slice(0, 2).map(tag => (
             <Badge key={tag} variant="secondary" className="text-xs font-archivo">
               {tag}
             </Badge>
           ))}
-          <div className="flex items-center text-sm">
+          <div className="flex items-center text-xs sm:text-sm ml-auto sm:ml-0">
             <span className="text-muted-foreground">{formatUserCount(agent.users)}</span>
             <span className="text-muted-foreground mx-1">•</span>
             <div className="flex items-center">
@@ -125,7 +128,7 @@ const AgentCard: React.FC<AgentCardProps> = ({ agent }) => {
             </div>
           </div>
         </div>
-        <Button size="sm" asChild>
+        <Button size="sm" asChild className="w-full sm:w-auto">
           <Link to={`/chat/${agent.id}`}>Try Now</Link>
         </Button>
       </CardFooter>
