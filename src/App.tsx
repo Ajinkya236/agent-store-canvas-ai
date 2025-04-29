@@ -12,9 +12,7 @@ import NotFound from "./pages/NotFound";
 const AgentDetail = lazy(() => import("./pages/AgentDetail"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const AgentBuilder = lazy(() => import("./pages/AgentBuilder"));
-const Community = lazy(() => import("./pages/Community"));
 const Documentation = lazy(() => import("./pages/Documentation"));
-const Pricing = lazy(() => import("./pages/Pricing"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Browse = lazy(() => import("./pages/Browse"));
 const ChatPage = lazy(() => import("./pages/ChatPage"));
@@ -53,9 +51,7 @@ const App = () => (
             <Route path="/agent/:id" element={<AgentDetail />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/builder" element={<AgentBuilder />} />
-            <Route path="/community" element={<Community />} />
             <Route path="/docs" element={<Documentation />} />
-            <Route path="/pricing" element={<Pricing />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/browse" element={<Browse />} />
             

@@ -75,14 +75,8 @@ const Header: React.FC = () => {
               <Link to="/browse" className="text-sm font-medium hover:underline underline-offset-4 hidden md:inline-block">
                 Browse
               </Link>
-              <Link to="/community" className="text-sm font-medium hover:underline underline-offset-4 hidden md:inline-block">
-                Community
-              </Link>
               <Link to="/docs" className="text-sm font-medium hover:underline underline-offset-4 hidden md:inline-block">
                 Docs
-              </Link>
-              <Link to="/pricing" className="text-sm font-medium hover:underline underline-offset-4 hidden md:inline-block">
-                Pricing
               </Link>
             </>
           )}
@@ -202,14 +196,8 @@ const Header: React.FC = () => {
             <Link to="/browse" className="text-sm font-medium py-2 px-4 rounded-md hover:bg-muted" onClick={toggleMobileMenu}>
               Browse
             </Link>
-            <Link to="/community" className="text-sm font-medium py-2 px-4 rounded-md hover:bg-muted" onClick={toggleMobileMenu}>
-              Community
-            </Link>
             <Link to="/docs" className="text-sm font-medium py-2 px-4 rounded-md hover:bg-muted" onClick={toggleMobileMenu}>
               Docs
-            </Link>
-            <Link to="/pricing" className="text-sm font-medium py-2 px-4 rounded-md hover:bg-muted" onClick={toggleMobileMenu}>
-              Pricing
             </Link>
             <Link to="/builder" className="text-sm font-medium py-2 px-4 rounded-md bg-accent-primary text-white" onClick={toggleMobileMenu}>
               Create Agent
