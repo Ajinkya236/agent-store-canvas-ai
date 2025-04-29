@@ -1,8 +1,9 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ModeToggle } from '@/components/ModeToggle';
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,11 +11,31 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { useUser } from '@clerk/clerk-react';
+} from "@/components/ui/dropdown-menu";
+
+// Conditionally import Clerk to prevent build errors if not configured
+let ClerkProvider, useUser;
+try {
+  const clerk = require('@clerk/clerk-react');
+  useUser = clerk.useUser;
+} catch (error) {
+  console.log("Clerk not available or properly configured");
+  // Provide mock functionality if Clerk is not available
+  useUser = () => ({ isSignedIn: false, user: null });
+}
 
 const Header: React.FC = () => {
-  const { isSignedIn, user } = useUser();
+  // Conditionally use Clerk's hooks
+  let isSignedIn = false;
+  let user = null;
+  
+  try {
+    const userResult = useUser();
+    isSignedIn = userResult.isSignedIn;
+    user = userResult.user;
+  } catch (error) {
+    console.log("Error using Clerk user data", error);
+  }
 
   return (
     <header className="bg-background border-b">
@@ -54,7 +75,7 @@ const Header: React.FC = () => {
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium leading-none">{user?.firstName} {user?.lastName}</p>
                     <p className="text-xs leading-none text-muted-foreground">
-                      {user?.emailAddresses[0].emailAddress}
+                      {user?.emailAddresses?.[0]?.emailAddress}
                     </p>
                   </div>
                 </DropdownMenuLabel>
