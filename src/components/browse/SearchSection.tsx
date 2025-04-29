@@ -24,13 +24,13 @@ const SearchSection: React.FC<SearchSectionProps> = ({
         Discover and deploy AI agents that solve real business challenges
       </p>
       
-      {/* Search Bar */}
-      <SearchBar onSearch={onSearch} />
-      
       {/* Banner Carousel */}
-      <div className="mt-4">
+      <div>
         <BannerCarousel />
       </div>
+      
+      {/* Search Bar - moved below banner */}
+      <SearchBar onSearch={onSearch} />
       
       {/* Category Filter */}
       <CategoryFilter 

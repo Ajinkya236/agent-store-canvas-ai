@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Filter } from 'lucide-react';
+import { Filter, ChevronRight } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import FilterPanel from '@/components/FilterPanel';
 import ViewToggleAndSort from '@/components/ViewToggleAndSort';
@@ -12,6 +12,8 @@ interface FilterControlsProps {
   setViewMode: (mode: 'grid' | 'list') => void;
   sortOption: string;
   setSortOption: (option: string) => void;
+  isFilterPanelOpen?: boolean;
+  toggleFilterPanel?: () => void;
 }
 
 const FilterControls: React.FC<FilterControlsProps> = ({
@@ -19,7 +21,9 @@ const FilterControls: React.FC<FilterControlsProps> = ({
   viewMode,
   setViewMode,
   sortOption,
-  setSortOption
+  setSortOption,
+  isFilterPanelOpen,
+  toggleFilterPanel
 }) => {
   return (
     <>
@@ -40,6 +44,22 @@ const FilterControls: React.FC<FilterControlsProps> = ({
               </div>
             </SheetContent>
           </Sheet>
+        </div>
+      )}
+      
+      {/* Desktop Filter Toggle (shown when filter panel is closed) */}
+      {!isMobile && !isFilterPanelOpen && (
+        <div className="hidden md:block mb-4">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={toggleFilterPanel}
+            className="flex items-center"
+          >
+            <Filter className="mr-2 h-4 w-4" />
+            Show Filters
+            <ChevronRight className="ml-2 h-4 w-4" />
+          </Button>
         </div>
       )}
       

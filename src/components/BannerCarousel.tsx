@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface BannerSlide {
   id: number;
@@ -45,39 +46,66 @@ const BannerCarousel: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const goToNext = () => {
+    setActiveIndex((current) => (current === banners.length - 1 ? 0 : current + 1));
+  };
+
+  const goToPrev = () => {
+    setActiveIndex((current) => (current === 0 ? banners.length - 1 : current - 1));
+  };
+
   return (
-    <div className="w-full my-6 px-6 sm:px-10 md:px-14 lg:px-20">
+    <div className="w-full my-6">
       <div className="max-w-7xl mx-auto">
         <Card className="overflow-hidden border-0 shadow-lg rounded-2xl">
-          <CardContent className="p-0 relative h-64 md:h-72">
+          <CardContent className="p-0 relative h-26 sm:h-28 md:h-32 flex items-center">
             {banners.map((banner, index) => (
               <div 
                 key={banner.id} 
-                className={`absolute inset-0 transition-all duration-700 ease-in-out ${banner.bgColor} text-white p-8 md:p-10 flex flex-col justify-center ${
+                className={`absolute inset-0 transition-all duration-700 ease-in-out ${banner.bgColor} text-white p-4 sm:p-6 flex flex-col justify-center ${
                   index === activeIndex ? "opacity-100 z-10" : "opacity-0 z-0"
                 }`}
               >
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-archivo-black mb-3">
+                <h2 className="text-lg sm:text-xl md:text-2xl font-archivo-black mb-1 md:mb-2">
                   {banner.title}
                 </h2>
-                <p className="mb-6 max-w-md font-archivo">
+                <p className="mb-3 max-w-md text-xs sm:text-sm font-archivo line-clamp-2">
                   {banner.description}
                 </p>
                 <div>
                   <Button 
-                    className="bg-white/90 text-black hover:bg-white/100 transition-all"
+                    className="bg-white/90 text-black hover:bg-white/100 transition-all text-xs py-1 px-3 h-auto"
                   >
                     {banner.ctaText}
                   </Button>
                 </div>
               </div>
             ))}
+            
+            {/* Navigation buttons */}
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/40 text-white rounded-full h-8 w-8"
+              onClick={goToPrev}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/40 text-white rounded-full h-8 w-8"
+              onClick={goToNext}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
           </CardContent>
-          <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
+          <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-2">
             {banners.map((_, index) => (
               <button
                 key={index}
-                className={`w-2 h-2 rounded-full transition-all ${
+                className={`w-1.5 h-1.5 rounded-full transition-all ${
                   index === activeIndex ? "bg-white scale-125" : "bg-white/50"
                 }`}
                 onClick={() => setActiveIndex(index)}

@@ -6,7 +6,7 @@ import { ModeToggle } from '@/components/ModeToggle';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import GlobalSearch from '@/components/GlobalSearch';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Menu, Bell, Plus } from 'lucide-react';
+import { Menu, Bell, Plus, LogOut, User } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,7 +24,7 @@ try {
 } catch (error) {
   console.log("Clerk not available or properly configured");
   // Provide mock functionality if Clerk is not available
-  useUser = () => ({ isSignedIn: false, user: null });
+  useUser = () => ({ isSignedIn: true, user: { firstName: "Demo", lastName: "User", emailAddresses: [{ emailAddress: "demo@example.com" }] } });
 }
 
 const Header: React.FC = () => {
@@ -32,13 +32,17 @@ const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   // Conditionally use Clerk's hooks
-  let isSignedIn = false;
-  let user = null;
+  let isSignedIn = true; // Changed to true by default
+  let user = { 
+    firstName: "Demo", 
+    lastName: "User", 
+    emailAddresses: [{ emailAddress: "demo@example.com" }] 
+  };
   
   try {
     const userResult = useUser();
     isSignedIn = userResult.isSignedIn;
-    user = userResult.user;
+    user = userResult.user || user;
   } catch (error) {
     console.log("Error using Clerk user data", error);
   }
@@ -91,87 +95,58 @@ const Header: React.FC = () => {
           
           <ModeToggle />
           
-          {isSignedIn ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 rounded-full p-0 data-[state=open]:bg-muted">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={user?.imageUrl} alt={user?.firstName} />
-                    <AvatarFallback>{user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end" forceMount>
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{user?.firstName} {user?.lastName}</p>
-                    <p className="text-xs leading-none text-muted-foreground">
-                      {user?.emailAddresses?.[0]?.emailAddress}
-                    </p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link to="/profile">
-                    Profile
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/dashboard">
-                    Dashboard
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/builder">
-                    Agent Builder
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/saved-agents">
-                    Saved Agents
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <a href="/sign-out">
-                    Sign Out
-                  </a>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <div className="flex items-center gap-2">
-              <Link to="/sign-in" className={isMobile ? "hidden" : ""}>
-                <Button variant="outline" size="sm">
-                  Sign In
-                </Button>
-              </Link>
-              <Link to="/sign-up" className={isMobile ? "hidden" : ""}>
-                <Button size="sm">
-                  Sign Up
-                </Button>
-              </Link>
-              {isMobile && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <Avatar className="h-8 w-8">
-                        <AvatarFallback>?</AvatarFallback>
-                      </Avatar>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem asChild>
-                      <Link to="/sign-in">Sign In</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/sign-up">Sign Up</Link>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
-            </div>
-          )}
+          {/* Always display a profile dropdown instead of sign-in buttons */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 rounded-full p-0 data-[state=open]:bg-muted">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src="/placeholder.svg" alt="User" />
+                  <AvatarFallback>
+                    {user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="end" forceMount>
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none">{user?.firstName} {user?.lastName}</p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    {user?.emailAddresses?.[0]?.emailAddress}
+                  </p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link to="/profile">
+                  <User className="mr-2 h-4 w-4" />
+                  Profile
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/dashboard">
+                  Dashboard
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/builder">
+                  Agent Builder
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/saved-agents">
+                  Saved Agents
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <a href="/sign-out" className="flex items-center">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign Out
+                </a>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           
           <Link to="/builder" className="hidden sm:block">
             <Button size="sm" className="bg-accent-primary hover:bg-accent-primary/90">

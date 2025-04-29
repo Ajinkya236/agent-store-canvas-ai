@@ -1,8 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import FilterPanel from '@/components/FilterPanel';
 import { AgentProps } from '@/components/AgentCard';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { ChevronLeft, ChevronRight, Filter } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 // Import refactored components
 import SearchSection from '@/components/browse/SearchSection';
@@ -102,6 +105,7 @@ const Browse: React.FC = () => {
   const [filteredAgents, setFilteredAgents] = useState<AgentProps[]>(agentsData);
   const [activeCategory, setActiveCategory] = useState('All Categories');
   const [showScrollToTop, setShowScrollToTop] = useState(false);
+  const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
   const isMobile = useIsMobile();
   
   // Categories for filter
@@ -147,6 +151,11 @@ const Browse: React.FC = () => {
     }));
   };
   
+  // Toggle filter panel
+  const toggleFilterPanel = () => {
+    setIsFilterPanelOpen(!isFilterPanelOpen);
+  };
+  
   // Create collections by filtering the agents data
   const trendingAgents = agentsData.filter((_, i) => i % 3 === 0);
   const staffPicksAgents = agentsData.filter((_, i) => i % 3 === 1);
@@ -176,15 +185,41 @@ const Browse: React.FC = () => {
             onCategoryChange={handleCategoryChange}
           />
           
-          <div className="mt-6 flex flex-col md:flex-row md:gap-8">
-            {/* Filter Panel - Hidden on mobile, visible on md and up */}
-            <div className="hidden md:block md:w-64 lg:w-72 flex-shrink-0">
-              <div className="sticky top-24">
-                <FilterPanel />
-              </div>
-            </div>
+          <div className="mt-6 flex flex-col md:flex-row md:gap-8 relative">
+            {/* Custom Filter Panel Toggle for Desktop */}
+            {!isMobile && (
+              <Button 
+                variant="outline"
+                size="sm"
+                className="absolute left-0 top-0 z-10 mb-4"
+                onClick={toggleFilterPanel}
+              >
+                <Filter className="mr-2 h-4 w-4" />
+                {isFilterPanelOpen ? "Hide Filters" : "Show Filters"}
+              </Button>
+            )}
             
-            <div className="flex-1 w-full">
+            {/* Filter Panel - Hidden by default, visible when toggled */}
+            {!isMobile && isFilterPanelOpen && (
+              <div className="md:w-64 lg:w-72 flex-shrink-0 transition-all duration-300 ease-in-out">
+                <div className="sticky top-24 bg-card rounded-lg border p-4 shadow-sm">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-semibold">Filters</h3>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={toggleFilterPanel}
+                      className="h-8 w-8 p-0"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <FilterPanel />
+                </div>
+              </div>
+            )}
+            
+            <div className={`flex-1 w-full ${!isMobile && isFilterPanelOpen ? 'md:ml-[300px]' : ''} transition-all duration-300`}>
               {/* Filter Controls and View Toggle */}
               <FilterControls 
                 isMobile={isMobile}
@@ -192,6 +227,8 @@ const Browse: React.FC = () => {
                 setViewMode={setViewMode}
                 sortOption={sortOption}
                 setSortOption={setSortOption}
+                isFilterPanelOpen={isFilterPanelOpen}
+                toggleFilterPanel={toggleFilterPanel}
               />
               
               {/* Main Content - Grid or Collections */}

@@ -43,7 +43,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
             className={`px-3 py-2 rounded-full whitespace-nowrap text-sm transition-all duration-300 font-archivo animate-fade-in flex-shrink-0 touch-action-manipulation ${
               activeCategory === category
                 ? 'bg-accent text-white shadow-md'
-                : 'bg-secondary/80 text-primary hover:bg-secondary'
+                : 'bg-gray-200 text-black hover:bg-gray-300'
             }`}
             style={{ animationDelay: `${index * 0.05}s`, animationFillMode: 'forwards', opacity: 0 }}
           >
