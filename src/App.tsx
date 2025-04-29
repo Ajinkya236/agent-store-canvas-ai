@@ -15,6 +15,7 @@ import Community from "./pages/Community";
 import Documentation from "./pages/Documentation";
 import Pricing from "./pages/Pricing";
 import Profile from "./pages/Profile";
+import Browse from "./pages/Browse";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
           <Route path="/docs" element={<Documentation />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/browse" element={<Browse />} />
           
           {/* Catch-all route */}
           <Route path="*" element={<NotFound />} />

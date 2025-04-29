@@ -1,10 +1,12 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import Header from '@/components/Header';
-import BannerCarousel from '@/components/BannerCarousel';
-import SearchBar from '@/components/SearchBar';
-import CategoryFilter from '@/components/CategoryFilter';
-import AgentGrid from '@/components/AgentGrid';
+import HeroSection from '@/components/HeroSection';
+import FeaturedAgents from '@/components/FeaturedAgents';
+import HowItWorks from '@/components/HowItWorks';
+import CategoriesShowcase from '@/components/CategoriesShowcase';
+import TestimonialsSlider from '@/components/TestimonialsSlider';
+import CallToAction from '@/components/CallToAction';
 import { AgentProps } from '@/components/AgentCard';
 
 // Sample data for our AI agents
@@ -44,79 +46,19 @@ const agentsData: AgentProps[] = [
     tags: ["Chat"],
     users: 6500,
     rating: 4.2
-  },
-  {
-    id: 5,
-    name: "UX Design Assistant",
-    description: "Generate UI mockups and design recommendations based on best practices",
-    logo: "/placeholder.svg",
-    tags: ["API"],
-    users: 9800,
-    rating: 4.6
-  },
-  {
-    id: 6,
-    name: "Learning Coach",
-    description: "Personalized learning paths and skill development recommendations for teams",
-    logo: "/placeholder.svg",
-    tags: ["Chat"],
-    users: 7200,
-    rating: 4.4
   }
 ];
 
-// Category filters
-const categories = ["All", "Product Design", "Human Resource", "Learning", "Travel", "Policy"];
-
 const Index: React.FC = () => {
-  const [activeCategory, setActiveCategory] = useState("All");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [agents, setAgents] = useState<AgentProps[]>(agentsData);
-
-  // Handle category change
-  const handleCategoryChange = (category: string) => {
-    setActiveCategory(category);
-    
-    if (category === "All") {
-      setAgents(agentsData);
-    } else {
-      // Filter agents based on category (in a real app, each agent would have a category field)
-      // This is just a simple simulation
-      const categoryLower = category.toLowerCase();
-      setAgents(agentsData.filter(agent => {
-        return agent.name.toLowerCase().includes(categoryLower) || 
-               agent.description.toLowerCase().includes(categoryLower);
-      }));
-    }
-  };
-
-  // Handle search
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    
-    if (!query.trim()) {
-      handleCategoryChange(activeCategory); // Reset to current category filter
-      return;
-    }
-    
-    const queryLower = query.toLowerCase();
-    setAgents(agentsData.filter(agent => {
-      return agent.name.toLowerCase().includes(queryLower) || 
-             agent.description.toLowerCase().includes(queryLower);
-    }));
-  };
-
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <BannerCarousel />
-      <SearchBar onSearch={handleSearch} />
-      <CategoryFilter 
-        categories={categories} 
-        activeCategory={activeCategory} 
-        onCategoryChange={handleCategoryChange} 
-      />
-      <AgentGrid agents={agents} />
+      <HeroSection />
+      <FeaturedAgents agents={agentsData} />
+      <HowItWorks />
+      <CategoriesShowcase />
+      <TestimonialsSlider />
+      <CallToAction />
     </div>
   );
 };
