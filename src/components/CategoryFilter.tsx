@@ -13,7 +13,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   onCategoryChange
 }) => {
   return (
-    <div className="w-full pt-8 pb-4 px-6 sm:px-10 md:px-14 lg:px-20 overflow-x-auto scrollbar-none">
+    <div className="w-full pt-8 pb-4 overflow-x-auto scrollbar-none">
       <div className="max-w-7xl mx-auto">
         <div className="flex gap-2 pb-1">
           {categories.map((category, index) => (

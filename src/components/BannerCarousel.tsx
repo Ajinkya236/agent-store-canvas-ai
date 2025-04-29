@@ -14,23 +14,23 @@ interface BannerSlide {
 const banners: BannerSlide[] = [
   {
     id: 1,
-    title: "New Document Processing Agent",
-    description: "Extract, analyze and summarize data from any document format",
+    title: "Enterprise Document Processing AI",
+    description: "Extract, analyze and summarize data from any document format with 99.8% accuracy",
     ctaText: "Learn More",
     bgColor: "bg-gradient-to-r from-blue-500/90 to-blue-600"
   },
   {
     id: 2, 
-    title: "Productivity Assistant",
-    description: "Complete daily administrative tasks with AI-powered automation",
+    title: "HR Process Automation",
+    description: "Reduce administrative workload by 70% with our AI-powered HR assistant",
     ctaText: "Discover",
     bgColor: "bg-gradient-to-r from-purple-500/90 to-purple-600"
   },
   {
     id: 3,
-    title: "Enterprise Training Agent",
-    description: "Create personalized learning experiences for your team",
-    ctaText: "Get Started",
+    title: "Enterprise Security Compliance",
+    description: "All agents are SOC 2, GDPR, and HIPAA compliant with enterprise-grade encryption",
+    ctaText: "Learn About Security",
     bgColor: "bg-gradient-to-r from-emerald-500/90 to-emerald-600"
   }
 ];
