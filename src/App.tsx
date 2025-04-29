@@ -16,6 +16,8 @@ import Documentation from "./pages/Documentation";
 import Pricing from "./pages/Pricing";
 import Profile from "./pages/Profile";
 import Browse from "./pages/Browse";
+import ChatPage from "./pages/ChatPage";
+import SavedAgents from "./pages/SavedAgents";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +39,10 @@ const App = () => (
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/browse" element={<Browse />} />
+          
+          {/* New routes for chat and saved agents */}
+          <Route path="/chat/:id" element={<ChatPage />} />
+          <Route path="/saved-agents" element={<SavedAgents />} />
           
           {/* Catch-all route */}
           <Route path="*" element={<NotFound />} />

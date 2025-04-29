@@ -1,124 +1,110 @@
-
 import React from 'react';
-import { 
-  NavigationMenu, 
-  NavigationMenuContent, 
-  NavigationMenuItem, 
-  NavigationMenuLink, 
-  NavigationMenuList, 
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle 
-} from '@/components/ui/navigation-menu';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { Search, User } from 'lucide-react';
+import { ModeToggle } from '@/components/ModeToggle';
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { useUser } from '@clerk/clerk-react';
 
 const Header: React.FC = () => {
+  const { isSignedIn, user } = useUser();
+
   return (
-    <header className="pt-6 pb-4 px-6 sm:px-10 md:px-14 lg:px-20 border-b border-border/40 sticky top-0 z-50 bg-background/80 backdrop-blur-xl">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-archivo-black tracking-tight text-primary animate-fade-in">
-              Enterprise Agent Store
-            </h1>
-            <p className="text-muted-foreground mt-1 text-sm sm:text-base animate-fade-in opacity-0" 
-               style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
-              Discover AI solutions to transform how your business works
-            </p>
-          </div>
-          <div className="flex md:hidden items-center gap-2">
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <Search className="h-5 w-5" />
-            </Button>
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <User className="h-5 w-5" />
-            </Button>
-          </div>
-        </div>
+    <header className="bg-background border-b">
+      <div className="container flex items-center justify-between h-16">
+        <Link to="/" className="font-archivo-black text-2xl">
+          Enterprise AI
+        </Link>
         
-        <div className="hidden md:flex items-center gap-4">
-          <NavigationMenu>
-            <NavigationMenuList>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="bg-transparent">Browse</NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-                    {categories.map((category) => (
-                      <li key={category.title}>
-                        <NavigationMenuLink asChild>
-                          <a
-                            href={category.href}
-                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                          >
-                            <div className="text-sm font-medium leading-none">{category.title}</div>
-                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                              {category.description}
-                            </p>
-                          </a>
-                        </NavigationMenuLink>
-                      </li>
-                    ))}
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Pricing
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Documentation
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
+        <nav className="flex items-center space-x-4">
+          <Link to="/browse" className="text-sm font-medium hover:underline underline-offset-4">
+            Browse
+          </Link>
+          <Link to="/community" className="text-sm font-medium hover:underline underline-offset-4">
+            Community
+          </Link>
+          <Link to="/docs" className="text-sm font-medium hover:underline underline-offset-4">
+            Docs
+          </Link>
+          <Link to="/pricing" className="text-sm font-medium hover:underline underline-offset-4">
+            Pricing
+          </Link>
           
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <Search className="h-5 w-5" />
-            </Button>
-            <Button variant="secondary" className="rounded-full px-4">Sign In</Button>
-          </div>
-        </div>
+          <ModeToggle />
+          
+          {isSignedIn ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0 data-[state=open]:bg-muted">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={user?.imageUrl} alt={user?.firstName} />
+                    <AvatarFallback>{user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{user?.firstName} {user?.lastName}</p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {user?.emailAddresses[0].emailAddress}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/profile">
+                    Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/dashboard">
+                    Dashboard
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/builder">
+                    Agent Builder
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/saved-agents">
+                    Saved Agents
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <a href="/sign-out">
+                    Sign Out
+                  </a>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <>
+              <Link to="/sign-in">
+                <Button variant="outline" size="sm">
+                  Sign In
+                </Button>
+              </Link>
+              <Link to="/sign-up">
+                <Button size="sm">
+                  Sign Up
+                </Button>
+              </Link>
+            </>
+          )}
+        </nav>
       </div>
     </header>
   );
 };
-
-// Sample categories for the navigation menu
-const categories = [
-  {
-    title: "Product Design",
-    description: "AI agents to assist with product design, prototyping, and UX research",
-    href: "#product-design",
-  },
-  {
-    title: "Human Resource",
-    description: "HR assistants for recruitment, onboarding, and employee management",
-    href: "#human-resource",
-  },
-  {
-    title: "Learning",
-    description: "Educational agents to help with skill development and knowledge acquisition",
-    href: "#learning",
-  },
-  {
-    title: "Travel",
-    description: "Travel planning and management assistants for business trips",
-    href: "#travel",
-  },
-  {
-    title: "Policy",
-    description: "Policy navigators to help understand company guidelines and regulations",
-    href: "#policy",
-  },
-  {
-    title: "All Categories",
-    description: "Browse all available AI agent categories",
-    href: "#all-categories",
-  },
-];
 
 export default Header;

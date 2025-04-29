@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -107,6 +107,23 @@ const AgentDetail: React.FC = () => {
   
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite);
+    
+    // Save/remove from localStorage when toggling favorite
+    const savedAgents = JSON.parse(localStorage.getItem('savedAgents') || '[]');
+    
+    if (isFavorite) {
+      // Remove from saved agents
+      const updatedSavedAgents = savedAgents.filter((savedAgent: { id: number }) => savedAgent.id !== agent.id);
+      localStorage.setItem('savedAgents', JSON.stringify(updatedSavedAgents));
+    } else {
+      // Add to saved agents with current timestamp
+      const agentWithTimestamp = {
+        ...agent,
+        savedAt: new Date().toISOString()
+      };
+      savedAgents.push(agentWithTimestamp);
+      localStorage.setItem('savedAgents', JSON.stringify(savedAgents));
+    }
   };
 
   // Reviews summary calculations
@@ -124,6 +141,13 @@ const AgentDetail: React.FC = () => {
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
+
+  // Check if this agent is already in saved agents on component mount
+  React.useEffect(() => {
+    const savedAgents = JSON.parse(localStorage.getItem('savedAgents') || '[]');
+    const isAlreadySaved = savedAgents.some((savedAgent: { id: number }) => savedAgent.id === agent.id);
+    setIsFavorite(isAlreadySaved);
+  }, [agent.id]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -172,7 +196,9 @@ const AgentDetail: React.FC = () => {
                   </div>
 
                   <div className="flex flex-wrap items-center gap-3 mt-6">
-                    <Button size="lg">Try it now</Button>
+                    <Button size="lg" asChild>
+                      <Link to={`/chat/${agent.id}`}>Try it now</Link>
+                    </Button>
                     <Button 
                       variant="outline" 
                       size="lg" 
@@ -208,7 +234,7 @@ const AgentDetail: React.FC = () => {
             </div>
           </div>
           
-          {/* Tab Navigation */}
+          {/* Tab Navigation - Removed Demo tab */}
           <Tabs defaultValue="overview" className="w-full">
             <TabsList className="w-full flex mb-8 overflow-x-auto bg-transparent p-0 h-auto space-x-2">
               <TabsTrigger 
@@ -216,12 +242,6 @@ const AgentDetail: React.FC = () => {
                 className="data-[state=active]:bg-accent data-[state=active]:text-white py-2 px-4"
               >
                 Overview
-              </TabsTrigger>
-              <TabsTrigger 
-                value="demo" 
-                className="data-[state=active]:bg-accent data-[state=active]:text-white py-2 px-4"
-              >
-                Demo
               </TabsTrigger>
               <TabsTrigger 
                 value="reviews" 

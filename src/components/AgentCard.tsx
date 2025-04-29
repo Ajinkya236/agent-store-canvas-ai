@@ -1,9 +1,10 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Heart } from 'lucide-react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 export interface AgentProps {
   id: number;
@@ -23,9 +24,34 @@ const AgentCard: React.FC<AgentCardProps> = ({ agent }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   
+  // Check if this agent is already in saved agents on component mount
+  useEffect(() => {
+    const savedAgents = JSON.parse(localStorage.getItem('savedAgents') || '[]');
+    const isAlreadySaved = savedAgents.some((savedAgent: { id: number }) => savedAgent.id === agent.id);
+    setIsFavorite(isAlreadySaved);
+  }, [agent.id]);
+  
   const toggleFavorite = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
+    
+    // Save/remove from localStorage when toggling favorite
+    const savedAgents = JSON.parse(localStorage.getItem('savedAgents') || '[]');
+    
+    if (isFavorite) {
+      // Remove from saved agents
+      const updatedSavedAgents = savedAgents.filter((savedAgent: { id: number }) => savedAgent.id !== agent.id);
+      localStorage.setItem('savedAgents', JSON.stringify(updatedSavedAgents));
+    } else {
+      // Add to saved agents with current timestamp
+      const agentWithTimestamp = {
+        ...agent,
+        savedAt: new Date().toISOString()
+      };
+      savedAgents.push(agentWithTimestamp);
+      localStorage.setItem('savedAgents', JSON.stringify(savedAgents));
+    }
+    
     setIsFavorite(!isFavorite);
   };
 
@@ -40,16 +66,16 @@ const AgentCard: React.FC<AgentCardProps> = ({ agent }) => {
   };
   
   return (
-    <Link to={`/agent/${agent.id}`}>
-      <Card 
-        className={`overflow-hidden transition-all duration-300 cursor-pointer border bg-card hover:shadow-md ${
-          isHovered ? 'transform scale-[1.02]' : ''
-        }`}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        <CardContent className="p-0">
-          <div className="p-5 flex items-start justify-between">
+    <Card 
+      className={`overflow-hidden transition-all duration-300 cursor-pointer border bg-card hover:shadow-md ${
+        isHovered ? 'transform scale-[1.02]' : ''
+      }`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <CardContent className="p-0">
+        <Link to={`/agent/${agent.id}`} className="block p-5">
+          <div className="flex items-start justify-between">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-xl overflow-hidden bg-secondary flex items-center justify-center">
                 <img 
@@ -73,20 +99,18 @@ const AgentCard: React.FC<AgentCardProps> = ({ agent }) => {
               <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
             </button>
           </div>
-        </CardContent>
-        <CardFooter className="p-5 pt-2 border-t flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            {agent.tags.map(tag => (
-              <Badge key={tag} variant="secondary" className="text-xs font-archivo">
-                {tag}
-              </Badge>
-            ))}
-          </div>
-          <div className="flex items-center space-x-3 text-sm">
-            <div className="flex items-center">
-              <span className="text-muted-foreground">{formatUserCount(agent.users)}</span>
-              <span className="text-muted-foreground mx-1">•</span>
-            </div>
+        </Link>
+      </CardContent>
+      <CardFooter className="p-5 pt-0 border-t flex flex-col sm:flex-row gap-4 items-center justify-between">
+        <div className="flex items-center space-x-2 flex-wrap gap-2">
+          {agent.tags.slice(0, 2).map(tag => (
+            <Badge key={tag} variant="secondary" className="text-xs font-archivo">
+              {tag}
+            </Badge>
+          ))}
+          <div className="flex items-center text-sm">
+            <span className="text-muted-foreground">{formatUserCount(agent.users)}</span>
+            <span className="text-muted-foreground mx-1">•</span>
             <div className="flex items-center">
               {[...Array(5)].map((_, i) => (
                 <svg
@@ -100,9 +124,12 @@ const AgentCard: React.FC<AgentCardProps> = ({ agent }) => {
               ))}
             </div>
           </div>
-        </CardFooter>
-      </Card>
-    </Link>
+        </div>
+        <Button size="sm" asChild>
+          <Link to={`/chat/${agent.id}`}>Try Now</Link>
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };
 
