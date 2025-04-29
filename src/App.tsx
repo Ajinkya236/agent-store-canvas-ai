@@ -4,22 +4,40 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Suspense, lazy } from "react";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
-// Import all page components
-import AgentDetail from "./pages/AgentDetail";
-import Dashboard from "./pages/Dashboard";
-import AgentBuilder from "./pages/AgentBuilder";
-import Community from "./pages/Community";
-import Documentation from "./pages/Documentation";
-import Pricing from "./pages/Pricing";
-import Profile from "./pages/Profile";
-import Browse from "./pages/Browse";
-import ChatPage from "./pages/ChatPage";
-import SavedAgents from "./pages/SavedAgents";
+// Lazy load page components for better performance
+const AgentDetail = lazy(() => import("./pages/AgentDetail"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const AgentBuilder = lazy(() => import("./pages/AgentBuilder"));
+const Community = lazy(() => import("./pages/Community"));
+const Documentation = lazy(() => import("./pages/Documentation"));
+const Pricing = lazy(() => import("./pages/Pricing"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Browse = lazy(() => import("./pages/Browse"));
+const ChatPage = lazy(() => import("./pages/ChatPage"));
+const SavedAgents = lazy(() => import("./pages/SavedAgents"));
 
-const queryClient = new QueryClient();
+// Create a loading component for Suspense fallback
+const PageLoading = () => (
+  <div className="flex items-center justify-center min-h-[50vh]">
+    <div className="animate-pulse-soft text-center">
+      <div className="h-8 w-8 mx-auto mb-4 rounded-full bg-accent-primary"></div>
+      <p className="text-muted-foreground">Loading...</p>
+    </div>
+  </div>
+);
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 1000, // 1 minute
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -27,26 +45,28 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          
-          {/* Add routes for all pages */}
-          <Route path="/agent/:id" element={<AgentDetail />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/builder" element={<AgentBuilder />} />
-          <Route path="/community" element={<Community />} />
-          <Route path="/docs" element={<Documentation />} />
-          <Route path="/pricing" element={<Pricing />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/browse" element={<Browse />} />
-          
-          {/* New routes for chat and saved agents */}
-          <Route path="/chat/:id" element={<ChatPage />} />
-          <Route path="/saved-agents" element={<SavedAgents />} />
-          
-          {/* Catch-all route */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Suspense fallback={<PageLoading />}>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            
+            {/* Add routes for all pages */}
+            <Route path="/agent/:id" element={<AgentDetail />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/builder" element={<AgentBuilder />} />
+            <Route path="/community" element={<Community />} />
+            <Route path="/docs" element={<Documentation />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/browse" element={<Browse />} />
+            
+            {/* Routes for chat and saved agents */}
+            <Route path="/chat/:id" element={<ChatPage />} />
+            <Route path="/saved-agents" element={<SavedAgents />} />
+            
+            {/* Catch-all route */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

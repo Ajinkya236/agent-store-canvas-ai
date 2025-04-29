@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Search, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -12,6 +13,7 @@ import {
   CommandSeparator
 } from "@/components/ui/command";
 import { useNavigate } from 'react-router-dom';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Define search result types
 type SearchResultItem = {
@@ -31,6 +33,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ onSearchComplete }) => {
   const [query, setQuery] = useState("");
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   // Mock search results
   const searchResults: SearchResultItem[] = [
@@ -157,19 +160,26 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ onSearchComplete }) => {
     return () => document.removeEventListener('keydown', down);
   }, []);
 
+  // Use responsive button styles based on screen size
+  const buttonClassName = isMobile
+    ? "relative h-9 w-full justify-start text-sm text-muted-foreground"
+    : "relative h-9 w-full justify-start text-sm text-muted-foreground sm:w-64 md:w-80 lg:w-96";
+
   return (
     <>
       <Button 
         variant="outline" 
-        className="relative h-9 w-full justify-start text-sm text-muted-foreground sm:w-64 md:w-80 lg:w-96"
+        className={buttonClassName}
         onClick={() => setOpen(true)}
       >
         <Search className="h-4 w-4 mr-2" />
         <span className="hidden lg:inline">Search agents, docs, forums...</span>
         <span className="inline lg:hidden">Search...</span>
-        <kbd className="pointer-events-none absolute right-2 top-2 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-xs font-medium opacity-100 sm:flex">
-          <span className="text-xs">⌘</span>K
-        </kbd>
+        {!isMobile && (
+          <kbd className="pointer-events-none absolute right-2 top-2 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-xs font-medium opacity-100 sm:flex">
+            <span className="text-xs">⌘</span>K
+          </kbd>
+        )}
       </Button>
 
       <CommandDialog open={open} onOpenChange={setOpen}>
@@ -179,7 +189,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ onSearchComplete }) => {
           onValueChange={setQuery}
           onKeyDown={handleKeyDown}
         />
-        <CommandList>
+        <CommandList className="max-h-[70vh]">
           <CommandEmpty>No results found.</CommandEmpty>
           
           {!query && recentSearches.length > 0 && (
