@@ -1,18 +1,14 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import FilterPanel from '@/components/FilterPanel';
-import ViewToggleAndSort from '@/components/ViewToggleAndSort';
-import AgentGrid from '@/components/AgentGrid';
-import FeaturedCollections from '@/components/FeaturedCollections';
-import SearchBar from '@/components/SearchBar';
-import BannerCarousel from '@/components/BannerCarousel';
-import CategoryFilter from '@/components/CategoryFilter';
 import { AgentProps } from '@/components/AgentCard';
-import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Filter, ChevronUp } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+
+// Import refactored components
+import SearchSection from '@/components/browse/SearchSection';
+import FilterControls from '@/components/browse/FilterControls';
+import MainContent from '@/components/browse/MainContent';
+import ScrollToTopButton from '@/components/browse/ScrollToTopButton';
 
 // Sample data for our AI agents
 const agentsData: AgentProps[] = [
@@ -150,11 +146,6 @@ const Browse: React.FC = () => {
              agent.name.toLowerCase().includes(categoryLower);
     }));
   };
-
-  // Handle scroll to top
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
   
   // Create collections by filtering the agents data
   const trendingAgents = agentsData.filter((_, i) => i % 3 === 0);
@@ -162,7 +153,7 @@ const Browse: React.FC = () => {
   const newReleasesAgents = agentsData.filter((_, i) => i % 3 === 2);
 
   // Add scroll event listener to show/hide scroll-to-top button
-  React.useEffect(() => {
+  useEffect(() => {
     const handleScroll = () => {
       setShowScrollToTop(window.scrollY > 300);
     };
@@ -177,43 +168,15 @@ const Browse: React.FC = () => {
       
       <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 pt-4 md:pt-8">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-2xl sm:text-3xl font-archivo-black mb-1 sm:mb-2">Enterprise Agent Store</h1>
-          <p className="text-sm sm:text-lg text-muted-foreground mb-4 sm:mb-6">Discover and deploy AI agents that solve real business challenges</p>
-          
-          {/* Search Bar - Full Width for Mobile */}
-          <SearchBar onSearch={handleSearch} />
-          
-          {/* Banner Carousel - Adjusted for Mobile */}
-          <div className="mt-4">
-            <BannerCarousel />
-          </div>
-          
-          {/* Category Filter - Horizontally Scrollable for Mobile */}
-          <CategoryFilter 
-            categories={categories} 
-            activeCategory={activeCategory} 
-            onCategoryChange={handleCategoryChange} 
+          {/* Search and Category Filter Section */}
+          <SearchSection 
+            categories={categories}
+            activeCategory={activeCategory}
+            onSearch={handleSearch}
+            onCategoryChange={handleCategoryChange}
           />
           
           <div className="mt-6 flex flex-col md:flex-row md:gap-8">
-            {/* Mobile Filter Button - Only shown on mobile */}
-            <div className="md:hidden mb-4 w-full">
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="outline" className="w-full flex items-center justify-center">
-                    <Filter className="h-4 w-4 mr-2" />
-                    Filters
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="bottom" className="h-[80vh] rounded-t-xl">
-                  <div className="py-4 px-1">
-                    <h3 className="text-lg font-semibold mb-4">Filter Agents</h3>
-                    <FilterPanel />
-                  </div>
-                </SheetContent>
-              </Sheet>
-            </div>
-            
             {/* Filter Panel - Hidden on mobile, visible on md and up */}
             <div className="hidden md:block md:w-64 lg:w-72 flex-shrink-0">
               <div className="sticky top-24">
@@ -222,42 +185,31 @@ const Browse: React.FC = () => {
             </div>
             
             <div className="flex-1 w-full">
-              {/* View Toggle and Sort - Simplified for mobile */}
-              <div className="mb-4">
-                <ViewToggleAndSort 
-                  viewMode={viewMode} 
-                  setViewMode={setViewMode} 
-                  sortOption={sortOption} 
-                  setSortOption={setSortOption}
-                  isMobile={isMobile}
-                />
-              </div>
+              {/* Filter Controls and View Toggle */}
+              <FilterControls 
+                isMobile={isMobile}
+                viewMode={viewMode}
+                setViewMode={setViewMode}
+                sortOption={sortOption}
+                setSortOption={setSortOption}
+              />
               
-              {searchQuery || activeCategory !== 'All Categories' ? (
-                <AgentGrid agents={filteredAgents} />
-              ) : (
-                <FeaturedCollections 
-                  trendingAgents={trendingAgents}
-                  staffPicksAgents={staffPicksAgents}
-                  newReleasesAgents={newReleasesAgents}
-                />
-              )}
+              {/* Main Content - Grid or Collections */}
+              <MainContent 
+                searchQuery={searchQuery}
+                activeCategory={activeCategory}
+                filteredAgents={filteredAgents}
+                trendingAgents={trendingAgents}
+                staffPicksAgents={staffPicksAgents}
+                newReleasesAgents={newReleasesAgents}
+              />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Scroll to top button - appears after scrolling */}
-      {showScrollToTop && (
-        <Button
-          onClick={scrollToTop}
-          className="fixed bottom-6 right-6 rounded-full w-12 h-12 p-0 shadow-lg z-50"
-          variant="default"
-          aria-label="Scroll to top"
-        >
-          <ChevronUp className="h-6 w-6" />
-        </Button>
-      )}
+      {/* Scroll to top button */}
+      <ScrollToTopButton isVisible={showScrollToTop} />
     </div>
   );
 };
