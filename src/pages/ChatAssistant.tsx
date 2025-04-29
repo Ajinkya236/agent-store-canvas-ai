@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -67,19 +66,19 @@ const ChatAssistant: React.FC = () => {
         {
           id: '1-2',
           role: 'assistant',
-          content: 'I\'d be happy to help you plan your software project! Let\'s start by defining the scope, objectives, and key deliverables. Could you share more details about what the software needs to accomplish?',
+          content: "I'd be happy to help you plan your software project! Let's start by defining the scope, objectives, and key deliverables. Could you share more details about what the software needs to accomplish?",
           timestamp: new Date(Date.now() - 1000 * 60 * 34)
         },
         {
           id: '1-3',
           role: 'user',
-          content: 'It's a customer portal that needs to show order history, allow returns, and provide support chat.',
+          content: "It's a customer portal that needs to show order history, allow returns, and provide support chat.",
           timestamp: new Date(Date.now() - 1000 * 60 * 32)
         },
         {
           id: '1-4',
           role: 'assistant',
-          content: 'Here are the project timeline estimates you requested. For a customer portal with those features, I recommend breaking it down into these phases:\n\n1. Design & Planning (2-3 weeks)\n2. Core Functionality Development (4-6 weeks)\n3. Integration with Order Systems (2-3 weeks)\n4. Returns Processing (2 weeks)\n5. Chat Support Integration (1-2 weeks)\n6. Testing & QA (2-3 weeks)\n7. Deployment & Launch Prep (1 week)\n\nTotal estimated timeline: 12-18 weeks depending on team size and complexity.',
+          content: "Here are the project timeline estimates you requested. For a customer portal with those features, I recommend breaking it down into these phases:\n\n1. Design & Planning (2-3 weeks)\n2. Core Functionality Development (4-6 weeks)\n3. Integration with Order Systems (2-3 weeks)\n4. Returns Processing (2 weeks)\n5. Chat Support Integration (1-2 weeks)\n6. Testing & QA (2-3 weeks)\n7. Deployment & Launch Prep (1 week)\n\nTotal estimated timeline: 12-18 weeks depending on team size and complexity.",
           timestamp: new Date(Date.now() - 1000 * 60 * 30)
         }
       ]
