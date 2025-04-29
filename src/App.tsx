@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
-// Import new page components
+// Import all page components
 import AgentDetail from "./pages/AgentDetail";
 import Dashboard from "./pages/Dashboard";
 import AgentBuilder from "./pages/AgentBuilder";
@@ -27,11 +27,11 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           
-          {/* Add new routes */}
+          {/* Add routes for all pages */}
           <Route path="/agent/:id" element={<AgentDetail />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/builder" element={<AgentBuilder />} />
-          <Route path="/community" element={<AgentBuilder />} />
+          <Route path="/community" element={<Community />} />
           <Route path="/docs" element={<Documentation />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/profile" element={<Profile />} />
