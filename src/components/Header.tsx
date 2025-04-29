@@ -79,7 +79,7 @@ const Header: React.FC = () => {
             <Button variant="ghost" size="icon" className="rounded-full">
               <Search className="h-5 w-5" />
             </Button>
-            <Button variant="accent" className="rounded-full px-4">Sign In</Button>
+            <Button variant="secondary" className="rounded-full px-4">Sign In</Button>
           </div>
         </div>
       </div>
