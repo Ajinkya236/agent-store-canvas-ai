@@ -33,13 +33,12 @@ const HowItWorks: React.FC = () => {
           {steps.map((step, index) => (
             <div 
               key={step.id} 
-              className="flex flex-col items-center text-center"
+              className="flex flex-col items-center text-center animate-fade-in"
               style={{ 
                 animationDelay: `${index * 0.2}s`, 
                 animationFillMode: 'forwards',
                 opacity: 0 
               }}
-              className="animate-fade-in"
             >
               <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mb-6">
                 <step.icon className="h-8 w-8 text-accent" />
