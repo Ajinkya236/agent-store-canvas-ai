@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
@@ -46,6 +47,7 @@ const agentsData: AgentProps[] = [{
   users: 6500,
   rating: 4.2
 }];
+
 const Index: React.FC = () => {
   return <div className="min-h-screen bg-background">
       <Header />
@@ -55,11 +57,17 @@ const Index: React.FC = () => {
       <div className="w-full py-8 px-6 sm:px-10 md:px-14 lg:px-20 bg-accent/5">
         <div className="max-w-7xl mx-auto flex justify-center flex-wrap gap-4">
           <Button asChild size="lg" className="bg-accent-primary hover:bg-accent-primary/90">
-            
+            <Link to="/builder">
+              <Plus className="mr-2 h-4 w-4" />
+              Build Your Agent
+            </Link>
           </Button>
           
           <Button asChild size="lg" className="bg-accent-primary hover:bg-accent-primary/90">
-            
+            <Link to="/chat-assistant">
+              <MessageSquare className="mr-2 h-4 w-4" />
+              Chat Assistant
+            </Link>
           </Button>
         </div>
       </div>

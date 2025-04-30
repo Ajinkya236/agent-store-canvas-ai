@@ -13,7 +13,7 @@ const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState("recent");
   
   // Mock data
-  const recentAgents = [
+  const recentAgents: AgentProps[] = [
     {
       id: 1,
       name: "Document Analyzer",
@@ -34,7 +34,7 @@ const Dashboard: React.FC = () => {
     }
   ];
   
-  const favoriteAgents = [
+  const favoriteAgents: AgentProps[] = [
     {
       id: 2,
       name: "HR Assistant",
@@ -61,7 +61,7 @@ const Dashboard: React.FC = () => {
     { name: "Travel Planner", usage: 23 },
   ];
   
-  const recommendations = [
+  const recommendations: AgentProps[] = [
     {
       id: 4,
       name: "Policy Navigator",
