@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
@@ -47,7 +46,6 @@ const agentsData: AgentProps[] = [{
   users: 6500,
   rating: 4.2
 }];
-
 const Index: React.FC = () => {
   return <div className="min-h-screen bg-background">
       <Header />
@@ -64,10 +62,7 @@ const Index: React.FC = () => {
           </Button>
           
           <Button asChild size="lg" className="bg-accent-primary hover:bg-accent-primary/90">
-            <Link to="/chat-assistant">
-              <MessageSquare className="mr-2 h-5 w-5" />
-              Chat Assistant
-            </Link>
+            
           </Button>
         </div>
       </div>
