@@ -9,7 +9,7 @@ import ChatSidebar from '@/components/chat/ChatSidebar';
 import ChatMessages from '@/components/chat/ChatMessages';
 import ChatInput from '@/components/chat/ChatInput';
 import ExploreApps from '@/components/chat/ExploreApps';
-import { ChatItem, GPTApp } from '@/types/chat';
+import { ChatItem, ChatMessage, GPTApp } from '@/types/chat';
 
 const ChatAssistant: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
