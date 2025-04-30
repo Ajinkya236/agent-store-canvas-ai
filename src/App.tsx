@@ -20,6 +20,7 @@ const SavedAgents = lazy(() => import("./pages/SavedAgents"));
 const MyAgents = lazy(() => import("./pages/MyAgents"));
 const ChatAssistant = lazy(() => import("./pages/ChatAssistant"));
 const ExploreApps = lazy(() => import("./pages/ExploreApps"));
+const CategoryView = lazy(() => import("./pages/CategoryView"));
 
 // Create a loading component for Suspense fallback
 const PageLoading = () => (
@@ -67,6 +68,7 @@ const App = () => (
             <Route path="/chat-assistant" element={<ChatAssistant />} />
             <Route path="/chat-assistant/:chatId" element={<ChatAssistant />} />
             <Route path="/explore-apps" element={<ExploreApps />} />
+            <Route path="/category/:category" element={<CategoryView />} />
             
             {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />

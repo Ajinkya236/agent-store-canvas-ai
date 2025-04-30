@@ -82,7 +82,6 @@ const Index: React.FC = () => {
       <FeaturedApps />
       <HowItWorks />
       
-      {/* Removed the "Browse Agents by Category" text */}
       <CategoriesShowcase />
       <TestimonialsSlider />
       <CallToAction />
