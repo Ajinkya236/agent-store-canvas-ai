@@ -6,7 +6,7 @@ import { ModeToggle } from '@/components/ModeToggle';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import GlobalSearch from '@/components/GlobalSearch';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Menu, Bell, Plus, LogOut, User } from 'lucide-react';
+import { Menu, Bell, Plus, LogOut, User, Hexagon } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -62,8 +62,13 @@ const Header: React.FC = () => {
             </Button>
           )}
           
-          <Link to="/" className="font-archivo-black text-xl md:text-2xl">
-            Enterprise AI
+          <Link to="/" className="flex items-center gap-2">
+            <div className="text-accent-primary">
+              <Hexagon className="h-8 w-8 fill-accent-primary/20 stroke-accent-primary" />
+            </div>
+            <span className="font-archivo-black text-xl md:text-2xl bg-gradient-to-r from-accent-primary to-accent-secondary bg-clip-text text-transparent">
+              NexusAI
+            </span>
           </Link>
         </div>
         
