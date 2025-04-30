@@ -53,6 +53,7 @@ const ChatAssistant: React.FC = () => {
   const [activeChat, setActiveChat] = useState<number | null>(1); // Start with first chat active
   const [editingChatId, setEditingChatId] = useState<number | null>(null);
   const [editingTitle, setEditingTitle] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -101,7 +102,7 @@ const ChatAssistant: React.FC = () => {
   const deleteChat = (id: number) => {
     setChatHistory(chatHistory.filter(chat => chat.id !== id));
     if (activeChat === id) {
-      setActiveChat(chatHistory.length > 1 ? chatHistory[0].id : null);
+      setActiveChat(chatHistory.length > 1 ? chatHistory.find(chat => chat.id !== id)?.id || null : null);
     }
     
     toast({
@@ -120,7 +121,7 @@ const ChatAssistant: React.FC = () => {
       setChatHistory(
         chatHistory.map(chat => 
           chat.id === editingChatId 
-            ? { ...chat, title: editingTitle || `Chat ${editingChatId}` } 
+            ? { ...chat, title: editingTitle || `Chat ${editingChatId}`, date: new Date() } 
             : chat
         )
       );
@@ -130,14 +131,55 @@ const ChatAssistant: React.FC = () => {
         title: "Chat renamed",
         description: "The chat title has been updated.",
       });
+
+      // Re-sort chat history by date
+      sortChatHistory();
     }
   };
+  
+  const sortChatHistory = () => {
+    const sorted = [...chatHistory].sort((a, b) => b.date.getTime() - a.date.getTime());
+    setChatHistory(sorted);
+  };
+
+  // Sort chats by date initially
+  React.useEffect(() => {
+    sortChatHistory();
+  }, []);
   
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       saveEditedChat();
     }
+  };
+  
+  const handleFileUpload = (type: 'image' | 'document') => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    
+    if (type === 'image') {
+      input.accept = 'image/*';
+    } else {
+      input.accept = '.pdf,.doc,.docx,.txt,.xlsx';
+    }
+    
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        setSelectedFile(file);
+        
+        toast({
+          title: `${type === 'image' ? 'Image' : 'Document'} uploaded`,
+          description: `${file.name} has been uploaded successfully.`,
+        });
+        
+        // In a real app, you would upload the file to a server
+        console.log(`${type} uploaded:`, file);
+      }
+    };
+    
+    input.click();
   };
   
   return (
@@ -188,7 +230,7 @@ const ChatAssistant: React.FC = () => {
                                 onClick={() => setActiveChat(chat.id)}
                                 isActive={activeChat === chat.id}
                               >
-                                <span className="text-sm truncate w-full text-left">{chat.title}</span>
+                                <span className="text-sm truncate w-full text-left font-medium">{chat.title}</span>
                                 <span className="text-xs text-muted-foreground">{formatDate(chat.date)}</span>
                               </SidebarMenuButton>
                               
@@ -237,6 +279,12 @@ const ChatAssistant: React.FC = () => {
                   <div className="text-center text-muted-foreground py-10">
                     {chatHistory.find(chat => chat.id === activeChat)?.title}
                     <p className="mt-2">This is where chat messages would appear.</p>
+                    {selectedFile && (
+                      <div className="mt-4 p-2 bg-accent/10 rounded-md inline-block">
+                        <p className="font-medium">Uploaded: {selectedFile.name}</p>
+                        <p className="text-sm">{(selectedFile.size / 1024).toFixed(2)} KB</p>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="text-center text-muted-foreground py-10">
@@ -262,11 +310,19 @@ const ChatAssistant: React.FC = () => {
                       </PopoverTrigger>
                       <PopoverContent side="top" align="start" className="w-48">
                         <div className="flex flex-col space-y-1">
-                          <Button variant="ghost" className="justify-start">
+                          <Button 
+                            variant="ghost" 
+                            className="justify-start"
+                            onClick={() => handleFileUpload('image')}
+                          >
                             <Image className="mr-2 h-4 w-4" />
                             Upload Image
                           </Button>
-                          <Button variant="ghost" className="justify-start">
+                          <Button 
+                            variant="ghost" 
+                            className="justify-start"
+                            onClick={() => handleFileUpload('document')}
+                          >
                             <FileText className="mr-2 h-4 w-4" />
                             Upload Document
                           </Button>

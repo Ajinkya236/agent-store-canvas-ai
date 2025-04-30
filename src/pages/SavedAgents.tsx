@@ -1,9 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
-import { Heart, Search } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Heart, Search, ArrowLeft } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { AgentProps } from '@/components/AgentCard';
@@ -16,6 +17,7 @@ const SavedAgents: React.FC = () => {
   const [savedAgents, setSavedAgents] = useState<SavedAgentProps[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredAgents, setFilteredAgents] = useState<SavedAgentProps[]>([]);
+  const navigate = useNavigate();
   
   useEffect(() => {
     // Load saved agents from localStorage
@@ -109,6 +111,16 @@ const SavedAgents: React.FC = () => {
       
       <div className="px-6 sm:px-10 md:px-14 lg:px-20 py-8">
         <div className="max-w-7xl mx-auto">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="mb-6" 
+            onClick={() => navigate('/browse')}
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Browse
+          </Button>
+
           <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
             <div>
               <h1 className="text-3xl font-archivo-black mb-2">Saved Agents</h1>

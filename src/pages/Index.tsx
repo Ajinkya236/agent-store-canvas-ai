@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
@@ -55,11 +56,17 @@ const Index: React.FC = () => {
       <div className="w-full py-8 px-6 sm:px-10 md:px-14 lg:px-20 bg-accent/5">
         <div className="max-w-7xl mx-auto flex justify-center flex-wrap gap-4">
           <Button asChild size="lg" className="bg-accent-primary hover:bg-accent-primary/90">
-            
+            <Link to="/builder" className="flex items-center gap-2">
+              <Plus className="h-5 w-5" />
+              Build Your Agent
+            </Link>
           </Button>
           
           <Button asChild size="lg" className="bg-accent-primary hover:bg-accent-primary/90">
-            
+            <Link to="/chat-assistant" className="flex items-center gap-2">
+              <MessageSquare className="h-5 w-5" />
+              Chat Assistant
+            </Link>
           </Button>
         </div>
       </div>
