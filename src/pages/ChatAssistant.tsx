@@ -1,54 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Header from '@/components/Header';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Link, useNavigate } from 'react-router-dom';
-import { Send, Plus, Bot, Image, FileText, Trash2, Edit2, Search, ArrowLeft, Star } from 'lucide-react';
-import { Sidebar, SidebarProvider, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarGroupContent, SidebarSeparator, SidebarInset } from '@/components/ui/sidebar';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
+import { useNavigate } from 'react-router-dom';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import AppDetailsDialog from '@/components/chat/AppDetailsDialog';
-
-interface ChatItem {
-  id: number;
-  title: string;
-  date: Date;
-  messages: ChatMessage[];
-  isFavorite?: boolean;
-}
-
-interface ChatMessage {
-  id: number;
-  content: string;
-  isUser: boolean;
-  timestamp: Date;
-  attachments?: {
-    type: 'image' | 'document' | 'code';
-    name: string;
-    content: string;
-  }[];
-}
-
-interface GPTApp {
-  id: number;
-  name: string;
-  description: string;
-  creator: string;
-  category: string;
-  image: string;
-  isFavorite: boolean;
-  rating?: number;
-  conversations?: number;
-  starters?: string[];
-  capabilities?: string[];
-}
+import ChatSidebar from '@/components/chat/ChatSidebar';
+import ChatMessages from '@/components/chat/ChatMessages';
+import ChatInput from '@/components/chat/ChatInput';
+import ExploreApps from '@/components/chat/ExploreApps';
+import { ChatItem, GPTApp } from '@/types/chat';
 
 const ChatAssistant: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
@@ -542,141 +503,23 @@ const ChatAssistant: React.FC = () => {
         <Header />
         
         <div className="flex flex-1 w-full">
-          <Sidebar className="border-r">
-            <SidebarHeader className="p-4">
-              <div className="flex flex-col gap-3 w-full">
-                <Link to="/explore-apps">
-                  <Button variant="outline" className="w-full">
-                    <Bot className="mr-2 h-4 w-4" />
-                    Explore Apps
-                  </Button>
-                </Link>
-                
-                <Button className="w-full" onClick={createNewChat}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  New Chat
-                </Button>
-              </div>
-            </SidebarHeader>
-            
-            <SidebarContent>
-              <Tabs defaultValue="chats" className="w-full">
-                <TabsList className="w-full grid grid-cols-2">
-                  <TabsTrigger value="chats">Chats</TabsTrigger>
-                  <TabsTrigger value="favorites">Favorites</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="chats" className="mt-0">
-                  <SidebarGroup>
-                    <SidebarGroupContent>
-                      <ScrollArea className="h-[calc(100vh-13rem)]">
-                        <SidebarMenu>
-                          {chatHistory.length === 0 ? (
-                            <div className="py-4 px-2 text-center text-muted-foreground text-sm">
-                              No chats yet. Click "New Chat" to get started.
-                            </div>
-                          ) : chatHistory.map(chat => (
-                            <SidebarMenuItem key={chat.id}>
-                              {editingChatId === chat.id ? (
-                                <div className="flex w-full items-center px-2 py-1">
-                                  <Input 
-                                    value={editingTitle} 
-                                    onChange={e => setEditingTitle(e.target.value)} 
-                                    onBlur={saveEditedChat} 
-                                    onKeyDown={handleKeyDown} 
-                                    className="h-8 text-sm" 
-                                    autoFocus 
-                                  />
-                                </div>
-                              ) : (
-                                <div className="flex w-full">
-                                  <SidebarMenuButton 
-                                    onClick={() => setActiveChat(chat.id)} 
-                                    isActive={activeChat === chat.id} 
-                                    className="flex flex-col items-start flex-grow"
-                                  >
-                                    <div className="flex items-center w-full">
-                                      {chat.isFavorite && (
-                                        <Star className="h-3.5 w-3.5 text-yellow-500 mr-1 flex-shrink-0" />
-                                      )}
-                                      <span className="text-sm truncate w-full text-left font-medium text-foreground">
-                                        {chat.title}
-                                      </span>
-                                    </div>
-                                    <span className="text-xs text-muted-foreground">
-                                      {formatDate(chat.date)}
-                                    </span>
-                                  </SidebarMenuButton>
-                                  
-                                  <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 ml-1">
-                                        <Edit2 className="h-4 w-4" />
-                                        <span className="sr-only">Open menu</span>
-                                      </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end">
-                                      <DropdownMenuItem onClick={() => toggleChatFavorite(chat.id)}>
-                                        <Star className="mr-2 h-4 w-4" />
-                                        {chat.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
-                                      </DropdownMenuItem>
-                                      <DropdownMenuItem onClick={() => startEditingChat(chat.id, chat.title)}>
-                                        <Edit2 className="mr-2 h-4 w-4" />
-                                        Rename
-                                      </DropdownMenuItem>
-                                      <DropdownMenuSeparator />
-                                      <DropdownMenuItem 
-                                        className="text-destructive focus:text-destructive" 
-                                        onClick={() => deleteChat(chat.id)}
-                                      >
-                                        <Trash2 className="mr-2 h-4 w-4" />
-                                        Delete
-                                      </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                  </DropdownMenu>
-                                </div>
-                              )}
-                            </SidebarMenuItem>
-                          ))}
-                        </SidebarMenu>
-                      </ScrollArea>
-                    </SidebarGroupContent>
-                  </SidebarGroup>
-                </TabsContent>
-                
-                <TabsContent value="favorites" className="mt-0">
-                  <ScrollArea className="h-[calc(100vh-13rem)]">
-                    <div className="p-4 space-y-4">
-                      {gptApps.filter(app => app.isFavorite).length === 0 ? (
-                        <div className="text-center text-muted-foreground py-8">
-                          <p>No favorite apps yet.</p>
-                          <p className="text-sm mt-1">
-                            Explore apps and mark them as favorites to see them here.
-                          </p>
-                        </div>
-                      ) : gptApps.filter(app => app.isFavorite).map(app => (
-                        <Card 
-                          key={app.id} 
-                          className="cursor-pointer hover:bg-accent/50 transition-colors"
-                          onClick={() => openAppDetails(app.id)}
-                        >
-                          <CardContent className="p-4 flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-md overflow-hidden flex-shrink-0">
-                              <img src={app.image} alt={app.name} className="w-full h-full object-cover" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <h3 className="font-medium text-sm truncate">{app.name}</h3>
-                              <p className="text-xs text-muted-foreground truncate">{app.description}</p>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  </ScrollArea>
-                </TabsContent>
-              </Tabs>
-            </SidebarContent>
-          </Sidebar>
+          <ChatSidebar 
+            chatHistory={chatHistory}
+            activeChat={activeChat}
+            gptApps={gptApps}
+            editingChatId={editingChatId}
+            editingTitle={editingTitle}
+            createNewChat={createNewChat}
+            setActiveChat={setActiveChat}
+            toggleChatFavorite={toggleChatFavorite}
+            startEditingChat={startEditingChat}
+            setEditingTitle={setEditingTitle}
+            saveEditedChat={saveEditedChat}
+            handleKeyDown={handleKeyDown}
+            deleteChat={deleteChat}
+            openAppDetails={openAppDetails}
+            formatDate={formatDate}
+          />
           
           <SidebarInset className="flex flex-col">
             <Tabs value={currentTab} onValueChange={setCurrentTab} className="flex flex-col flex-1 w-full">
@@ -689,282 +532,42 @@ const ChatAssistant: React.FC = () => {
                 <div className="flex-1 flex flex-col max-w-4xl w-full mx-auto px-4">
                   {/* Chat messages */}
                   <div className="flex-1 overflow-y-auto py-4">
-                    {!activeChat ? (
-                      <div className="flex flex-col items-center justify-center h-full text-center">
-                        <h1 className="text-2xl font-bold mb-2">Welcome to AI Assistant</h1>
-                        <p className="text-muted-foreground max-w-md mb-6">
-                          Your personal AI-powered assistant for writing, coding, learning, and problem-solving.
-                        </p>
-                        <Button onClick={createNewChat}>
-                          <Plus className="mr-2 h-4 w-4" />
-                          Start a new chat
-                        </Button>
-                      </div>
-                    ) : (
-                      <>
-                        {chatHistory.find(chat => chat.id === activeChat)?.messages.length === 0 ? (
-                          <div className="flex flex-col items-center justify-center h-full text-center">
-                            <h2 className="text-xl font-semibold mb-2">Start a conversation</h2>
-                            <p className="text-muted-foreground mb-4 max-w-md">
-                              Ask me anything and I'll do my best to help you.
-                            </p>
-                            <div className="grid grid-cols-2 gap-2 max-w-md">
-                              <Button 
-                                variant="outline" 
-                                onClick={() => setInputValue("Help me write a professional email")} 
-                                className="text-left justify-start h-auto py-3"
-                              >
-                                Help me write a professional email
-                              </Button>
-                              <Button 
-                                variant="outline" 
-                                onClick={() => setInputValue("Explain quantum computing")} 
-                                className="text-left justify-start h-auto py-3"
-                              >
-                                Explain quantum computing
-                              </Button>
-                              <Button 
-                                variant="outline" 
-                                onClick={() => setInputValue("How do I improve my JavaScript skills?")} 
-                                className="text-left justify-start h-auto py-3"
-                              >
-                                How do I improve my JavaScript skills?
-                              </Button>
-                              <Button 
-                                variant="outline" 
-                                onClick={() => setInputValue("Create a workout plan for me")} 
-                                className="text-left justify-start h-auto py-3"
-                              >
-                                Create a workout plan for me
-                              </Button>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="space-y-6">
-                            {chatHistory.find(chat => chat.id === activeChat)?.messages.map((message) => (
-                              <div 
-                                key={message.id}
-                                className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
-                              >
-                                <div className={`max-w-[80%] rounded-lg p-4 ${message.isUser ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-                                  {/* Message content */}
-                                  <div className="whitespace-pre-wrap mb-1">{message.content}</div>
-                                  
-                                  {/* Attachments */}
-                                  {message.attachments && message.attachments.length > 0 && (
-                                    <div className="mt-3 space-y-2">
-                                      {message.attachments.map((attachment, index) => (
-                                        <div key={index}>
-                                          {attachment.type === 'image' ? (
-                                            <div className="mt-2">
-                                              <img 
-                                                src={attachment.content} 
-                                                alt={attachment.name}
-                                                className="max-w-full rounded"
-                                              />
-                                              <div className="text-xs mt-1 opacity-70">{attachment.name}</div>
-                                            </div>
-                                          ) : attachment.type === 'code' ? (
-                                            <div className="mt-2 rounded bg-muted-foreground/10 p-3 text-sm">
-                                              <div className="text-xs font-medium mb-1 text-foreground/70">{attachment.name}</div>
-                                              <pre className="whitespace-pre-wrap break-all"><code>{attachment.content}</code></pre>
-                                            </div>
-                                          ) : (
-                                            <div className="flex items-center p-2 rounded bg-background/80">
-                                              <FileText className="h-4 w-4 mr-2" />
-                                              <span className="text-sm">{attachment.name}</span>
-                                            </div>
-                                          )}
-                                        </div>
-                                      ))}
-                                    </div>
-                                  )}
-                                  
-                                  {/* Timestamp */}
-                                  <div className={`text-xs ${message.isUser ? 'text-primary-foreground/70' : 'text-muted-foreground'} text-right mt-1`}>
-                                    {formatTime(message.timestamp)}
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                            <div ref={messagesEndRef} />
-                          </div>
-                        )}
-                      </>
-                    )}
+                    <ChatMessages 
+                      activeChat={activeChat}
+                      chatHistory={chatHistory}
+                      createNewChat={createNewChat}
+                      setInputValue={setInputValue}
+                      formatTime={formatTime}
+                      messagesEndRef={messagesEndRef}
+                    />
                   </div>
                   
                   {/* Input area */}
-                  {activeChat && (
-                    <form onSubmit={handleSubmit} className="border-t py-4">
-                      <div className="flex gap-2">
-                        <div className="flex space-x-1">
-                          <input
-                            type="file"
-                            ref={fileInputRef}
-                            onChange={handleFileChange}
-                            accept=".pdf,.doc,.docx,.txt"
-                            className="hidden"
-                          />
-                          <input
-                            type="file"
-                            ref={imageInputRef}
-                            onChange={handleFileChange}
-                            accept="image/*"
-                            className="hidden"
-                          />
-                          <Button 
-                            type="button" 
-                            variant="ghost" 
-                            size="icon" 
-                            className="rounded-full"
-                            onClick={() => handleFileUpload('document')}
-                          >
-                            <FileText className="h-5 w-5" />
-                            <span className="sr-only">Upload document</span>
-                          </Button>
-                          <Button 
-                            type="button" 
-                            variant="ghost" 
-                            size="icon" 
-                            className="rounded-full"
-                            onClick={() => handleFileUpload('image')}
-                          >
-                            <Image className="h-5 w-5" />
-                            <span className="sr-only">Upload image</span>
-                          </Button>
-                        </div>
-                        
-                        <div className="flex-1 relative">
-                          <Input
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                            placeholder="Type a message..."
-                            className="pr-12"
-                            disabled={isProcessing}
-                          />
-                          {selectedFile && (
-                            <div className="absolute left-1 top-[-30px] bg-accent text-accent-foreground rounded-l rounded-t-md px-2 py-1 text-xs flex items-center">
-                              <span className="truncate max-w-[150px]">{selectedFile.name}</span>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                className="h-4 w-4 p-0 ml-1"
-                                onClick={() => setSelectedFile(null)}
-                              >
-                                <Trash2 className="h-3 w-3" />
-                                <span className="sr-only">Remove file</span>
-                              </Button>
-                            </div>
-                          )}
-                        </div>
-                        
-                        <Button 
-                          type="submit" 
-                          size="icon" 
-                          className="rounded-full" 
-                          disabled={(!inputValue.trim() && !selectedFile) || isProcessing}
-                        >
-                          <Send className="h-5 w-5" />
-                          <span className="sr-only">Send message</span>
-                        </Button>
-                      </div>
-                    </form>
-                  )}
+                  <ChatInput 
+                    activeChat={activeChat}
+                    inputValue={inputValue}
+                    setInputValue={setInputValue}
+                    selectedFile={selectedFile}
+                    setSelectedFile={setSelectedFile}
+                    isProcessing={isProcessing}
+                    handleSubmit={handleSubmit}
+                    handleKeyDown={handleKeyDown}
+                    handleFileUpload={handleFileUpload}
+                  />
                 </div>
               </TabsContent>
               
               <TabsContent value="gpt" className="flex-1 overflow-y-auto p-4">
-                <div className="max-w-4xl mx-auto">
-                  <div className="mb-6">
-                    <h1 className="text-2xl font-bold mb-2">Explore Apps</h1>
-                    <p className="text-muted-foreground">
-                      Discover specialized AI apps tailored for specific tasks and topics.
-                    </p>
-                  </div>
-                  
-                  <div className="mb-6">
-                    <Input
-                      placeholder="Search apps..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="mb-4"
-                    />
-                    
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {["Writing", "Coding", "Education", "Lifestyle", "Design", "Health"].map(category => (
-                        <Badge 
-                          key={category}
-                          variant={selectedCategory === category ? "default" : "outline"}
-                          className="cursor-pointer"
-                          onClick={() => setSelectedCategory(selectedCategory === category ? null : category)}
-                        >
-                          {category}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {filteredGptApps.length === 0 ? (
-                      <div className="col-span-full text-center py-12">
-                        <p className="text-muted-foreground">No apps match your search criteria.</p>
-                      </div>
-                    ) : filteredGptApps.map(app => (
-                      <Card 
-                        key={app.id} 
-                        className="cursor-pointer hover:bg-accent/50 transition-colors h-full"
-                        onClick={() => openAppDetails(app.id)}
-                      >
-                        <CardContent className="p-4 flex flex-col h-full">
-                          <div className="flex items-center gap-3 mb-3">
-                            <div className="w-12 h-12 rounded-md overflow-hidden flex-shrink-0">
-                              <img src={app.image} alt={app.name} className="w-full h-full object-cover" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <h3 className="font-medium truncate">{app.name}</h3>
-                              <p className="text-xs text-muted-foreground">By {app.creator}</p>
-                            </div>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                toggleAppFavorite(app.id);
-                              }}
-                              className={app.isFavorite ? 'text-yellow-500' : ''}
-                            >
-                              <Star className="h-4 w-4" fill={app.isFavorite ? "currentColor" : "none"} />
-                            </Button>
-                          </div>
-                          <p className="text-sm text-muted-foreground line-clamp-3 mb-auto">
-                            {app.description}
-                          </p>
-                          <div className="flex items-center justify-between mt-3 pt-3 border-t">
-                            <div className="flex items-center">
-                              <div className="flex items-center mr-2">
-                                {[1, 2, 3, 4, 5].map((star) => (
-                                  <Star
-                                    key={star}
-                                    className="w-3 h-3"
-                                    fill={star <= (app.rating || 0) ? "#FFD700" : "none"}
-                                    stroke={star <= (app.rating || 0) ? "#FFD700" : "currentColor"}
-                                  />
-                                ))}
-                              </div>
-                              <span className="text-xs">{app.rating?.toFixed(1)}</span>
-                            </div>
-                            <Badge variant="secondary" className="text-xs">
-                              {app.category}
-                            </Badge>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
+                <ExploreApps 
+                  gptApps={gptApps}
+                  filteredGptApps={filteredGptApps}
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                  selectedCategory={selectedCategory}
+                  setSelectedCategory={setSelectedCategory}
+                  toggleAppFavorite={toggleAppFavorite}
+                  openAppDetails={openAppDetails}
+                />
               </TabsContent>
             </Tabs>
           </SidebarInset>

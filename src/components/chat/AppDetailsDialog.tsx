@@ -5,20 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Star } from 'lucide-react';
-
-interface GPTApp {
-  id: number;
-  name: string;
-  description: string;
-  creator: string;
-  category: string;
-  image: string;
-  isFavorite: boolean;
-  rating?: number;
-  conversations?: number;
-  starters?: string[];
-  capabilities?: string[];
-}
+import { GPTApp } from '@/types/chat';
 
 interface AppDetailsDialogProps {
   app: GPTApp | undefined;
@@ -48,7 +35,7 @@ const AppDetailsDialog: React.FC<AppDetailsDialogProps> = ({
                 <AvatarFallback className="rounded-md">{app.name.charAt(0)}</AvatarFallback>
               </Avatar>
               <div>
-                <DialogTitle className="text-xl">{app.name}</DialogTitle>
+                <DialogTitle className="text-xl text-foreground">{app.name}</DialogTitle>
                 <DialogDescription className="flex items-center gap-1">
                   By {app.creator}
                   <Badge variant="outline" className="ml-2">{app.category}</Badge>
