@@ -10,7 +10,7 @@ import TestimonialsSlider from '@/components/TestimonialsSlider';
 import CallToAction from '@/components/CallToAction';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { MessageSquare } from 'lucide-react';
+import { MessageSquare, Plus } from 'lucide-react';
 import { AgentProps } from '@/components/AgentCard';
 
 // Sample data for our AI agents
@@ -59,9 +59,16 @@ const Index: React.FC = () => {
       <Header />
       <HeroSection />
       
-      {/* Chat Assistant Button */}
+      {/* Build Your Agent and Chat Assistant Buttons */}
       <div className="w-full py-8 px-6 sm:px-10 md:px-14 lg:px-20 bg-accent/5">
-        <div className="max-w-7xl mx-auto flex justify-center">
+        <div className="max-w-7xl mx-auto flex justify-center flex-wrap gap-4">
+          <Button asChild size="lg" className="bg-accent-primary hover:bg-accent-primary/90">
+            <Link to="/builder" className="flex items-center">
+              <Plus className="mr-2 h-5 w-5" />
+              Build Your Agent
+            </Link>
+          </Button>
+          
           <Button asChild size="lg" className="bg-accent-primary hover:bg-accent-primary/90">
             <Link to="/chat-assistant" className="flex items-center">
               <MessageSquare className="mr-2 h-5 w-5" />
@@ -75,13 +82,7 @@ const Index: React.FC = () => {
       <FeaturedApps />
       <HowItWorks />
       
-      {/* Changed "Browse by Category" to "Browse Agents by Category" */}
-      <div className="w-full py-8 bg-background">
-        <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl font-archivo-black mb-6">Browse Agents by Category</h2>
-        </div>
-      </div>
-      
+      {/* Removed the "Browse Agents by Category" text */}
       <CategoriesShowcase />
       <TestimonialsSlider />
       <CallToAction />
