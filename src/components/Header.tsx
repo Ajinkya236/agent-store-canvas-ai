@@ -77,7 +77,7 @@ const Header: React.FC = () => {
           {!isMobile && (
             <>
               <Link to="/browse" className="text-sm font-medium hover:underline underline-offset-4 hidden md:inline-block">
-                Browse
+                Browse Agents
               </Link>
               <Link to="/my-agents" className="text-sm font-medium hover:underline underline-offset-4 hidden md:inline-block">
                 My Agents
@@ -175,7 +175,7 @@ const Header: React.FC = () => {
         <div className="md:hidden px-4 py-4 border-t animate-slide-in-from-bottom">
           <nav className="flex flex-col space-y-4">
             <Link to="/browse" className="text-sm font-medium py-2 px-4 rounded-md hover:bg-muted" onClick={toggleMobileMenu}>
-              Browse
+              Browse Agents
             </Link>
             <Link to="/my-agents" className="text-sm font-medium py-2 px-4 rounded-md hover:bg-muted" onClick={toggleMobileMenu}>
               My Agents
