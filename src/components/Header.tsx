@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -15,6 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import RegisterAgentModal from '@/components/RegisterAgentModal';
 
 // Conditionally import Clerk to prevent build errors if not configured
 let useUser;
@@ -30,6 +30,7 @@ try {
 const Header: React.FC = () => {
   const isMobile = useIsMobile();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [registerModalOpen, setRegisterModalOpen] = useState(false);
   
   // Conditionally use Clerk's hooks
   let isSignedIn = true; // Changed to true by default
@@ -159,12 +160,14 @@ const Header: React.FC = () => {
             </DropdownMenuContent>
           </DropdownMenu>
           
-          <Link to="/builder" className="hidden sm:block">
-            <Button size="sm" className="bg-accent-primary hover:bg-accent-primary/90">
-              <Plus className="mr-2 h-4 w-4" />
-              Create Agent
-            </Button>
-          </Link>
+          <Button 
+            onClick={() => setRegisterModalOpen(true)} 
+            size="sm" 
+            className="hidden sm:block bg-accent-primary hover:bg-accent-primary/90"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Register Agent
+          </Button>
         </div>
       </div>
       
@@ -191,12 +194,24 @@ const Header: React.FC = () => {
             <Link to="/docs" className="text-sm font-medium py-2 px-4 rounded-md hover:bg-muted" onClick={toggleMobileMenu}>
               Docs
             </Link>
-            <Link to="/builder" className="text-sm font-medium py-2 px-4 rounded-md bg-accent-primary text-white" onClick={toggleMobileMenu}>
-              Create Agent
-            </Link>
+            <Button 
+              onClick={() => {
+                setRegisterModalOpen(true);
+                toggleMobileMenu();
+              }} 
+              className="text-sm font-medium py-2 px-4 rounded-md bg-accent-primary text-white"
+            >
+              Register Agent
+            </Button>
           </nav>
         </div>
       )}
+      
+      {/* Register Agent Modal */}
+      <RegisterAgentModal
+        open={registerModalOpen}
+        onOpenChange={setRegisterModalOpen}
+      />
     </header>
   );
 };
