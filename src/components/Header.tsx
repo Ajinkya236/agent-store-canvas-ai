@@ -1,20 +1,16 @@
+
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Menu, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ModeToggle } from '@/components/ModeToggle';
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import GlobalSearch from '@/components/GlobalSearch';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Menu, Bell, Plus, LogOut, User, Hexagon } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import GlobalSearch from '@/components/GlobalSearch';
 import RegisterAgentModal from '@/components/RegisterAgentModal';
+import BrandLogo from '@/components/header/BrandLogo';
+import MainNavigation from '@/components/header/MainNavigation';
+import NotificationsButton from '@/components/header/NotificationsButton';
+import ProfileDropdown from '@/components/header/ProfileDropdown';
+import MobileMenu from '@/components/header/MobileMenu';
 
 // Conditionally import Clerk to prevent build errors if not configured
 let useUser;
@@ -63,14 +59,7 @@ const Header: React.FC = () => {
             </Button>
           )}
           
-          <Link to="/" className="flex items-center gap-2">
-            <div className="text-accent-primary">
-              <Hexagon className="h-8 w-8 fill-accent-primary/20 stroke-accent-primary" />
-            </div>
-            <span className="font-archivo-black text-xl md:text-2xl bg-gradient-to-r from-accent-primary to-accent-secondary bg-clip-text text-transparent">
-              NexusAI
-            </span>
-          </Link>
+          <BrandLogo />
         </div>
         
         {!isMobile && (
@@ -80,85 +69,13 @@ const Header: React.FC = () => {
         )}
         
         <div className="flex items-center gap-2 md:gap-4">
-          {!isMobile && (
-            <>
-              <Link to="/browse" className="text-sm font-medium hover:underline underline-offset-4 hidden md:inline-block">
-                Browse Agents
-              </Link>
-              <Link to="/my-agents" className="text-sm font-medium hover:underline underline-offset-4 hidden md:inline-block">
-                My Agents
-              </Link>
-              <Link to="/chat-assistant" className="text-sm font-medium hover:underline underline-offset-4 hidden md:inline-block">
-                Chat Assistant
-              </Link>
-              <Link to="/docs" className="text-sm font-medium hover:underline underline-offset-4 hidden md:inline-block">
-                Docs
-              </Link>
-            </>
-          )}
+          {!isMobile && <MainNavigation />}
           
-          {!isMobile && (
-            <Button variant="ghost" size="icon" className="relative">
-              <Bell className="h-5 w-5" />
-              <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-accent-primary"></span>
-              <span className="sr-only">Notifications</span>
-            </Button>
-          )}
+          {!isMobile && <NotificationsButton />}
           
           <ModeToggle />
           
-          {/* Always display a profile dropdown instead of sign-in buttons */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 rounded-full p-0 data-[state=open]:bg-muted">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src="/placeholder.svg" alt="User" />
-                  <AvatarFallback>
-                    {user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end" forceMount>
-              <DropdownMenuLabel className="font-normal">
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">{user?.firstName} {user?.lastName}</p>
-                  <p className="text-xs leading-none text-muted-foreground">
-                    {user?.emailAddresses?.[0]?.emailAddress}
-                  </p>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link to="/profile">
-                  <User className="mr-2 h-4 w-4" />
-                  Profile
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/dashboard">
-                  Dashboard
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/builder">
-                  Agent Builder
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/saved-agents">
-                  Saved Agents
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <a href="/sign-out" className="flex items-center">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Sign Out
-                </a>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <ProfileDropdown userData={user} />
           
           <Button 
             onClick={() => setRegisterModalOpen(true)} 
@@ -179,33 +96,11 @@ const Header: React.FC = () => {
       )}
       
       {/* Mobile menu dropdown */}
-      {isMobile && mobileMenuOpen && (
-        <div className="md:hidden px-4 py-4 border-t animate-slide-in-from-bottom">
-          <nav className="flex flex-col space-y-4">
-            <Link to="/browse" className="text-sm font-medium py-2 px-4 rounded-md hover:bg-muted" onClick={toggleMobileMenu}>
-              Browse Agents
-            </Link>
-            <Link to="/my-agents" className="text-sm font-medium py-2 px-4 rounded-md hover:bg-muted" onClick={toggleMobileMenu}>
-              My Agents
-            </Link>
-            <Link to="/chat-assistant" className="text-sm font-medium py-2 px-4 rounded-md hover:bg-muted" onClick={toggleMobileMenu}>
-              Chat Assistant
-            </Link>
-            <Link to="/docs" className="text-sm font-medium py-2 px-4 rounded-md hover:bg-muted" onClick={toggleMobileMenu}>
-              Docs
-            </Link>
-            <Button 
-              onClick={() => {
-                setRegisterModalOpen(true);
-                toggleMobileMenu();
-              }} 
-              className="text-sm font-medium py-2 px-4 rounded-md bg-accent-primary text-white"
-            >
-              Register Agent
-            </Button>
-          </nav>
-        </div>
-      )}
+      <MobileMenu 
+        isOpen={isMobile && mobileMenuOpen}
+        onClose={toggleMobileMenu}
+        onRegisterClick={() => setRegisterModalOpen(true)}
+      />
       
       {/* Register Agent Modal */}
       <RegisterAgentModal
